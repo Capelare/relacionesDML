@@ -91,9 +91,23 @@ FROM alumnos
 WHERE to_date(to_char(fecha_nacimiento,'DD-MM'),'DD-MM') BETWEEN NEXT_DAY(SYSDATE-7, 'lunes') AND NEXT_DAY(SYSDATE,'lunes'); 
 
 -- 19. Liste el nombre y apellidos de los profesores cuya antigüedad en la jubilación será de menos de 25 años de servicio.
+SELECT nombre, apellido1, apellido2
+FROM profesores
+WHERE MONTHS_BETWEEN((ADD_MONTHS(fecha_nacimiento, (65 * 12))), antiguedad) < (25*12);
 
 -- 20. Informe de quienes no alcanzan esa antigüedad por tan solo 6 meses.
+SELECT nombre, apellido1, apellido2
+FROM profesores
+WHERE MONTHS_BETWEEN((ADD_MONTHS(fecha_nacimiento, (65 * 12))), antiguedad) < (25*12)
+AND MONTHS_BETWEEN((ADD_MONTHS(fecha_nacimiento, (65 * 12))), antiguedad) > ((25*12)-6);
 
 -- 21. Liste la información del nombre de las asignaturas troncales de segundo curso ordenadas por los créditos descendentemente. Muestre el valor de este atributo gráficamente, donde cada crédito se representa con tres repeticiones del caracter '#'. Use la función LPAD.
+SELECT nombre, creditos LPAD('#',creditos*3,'#') FROM asignaturas
+WHERE caracter='TR'
+AND curso=2
+ORDER BY creditos DESC;
 
 -- 22. Para cada asignatura muestre el nombre, el curso, los créditos totales y el valor de créditos mayor entre los teóricos o prácticos. Use la funión GREATEST.
+
+SELECT nombre, curso, creditos, GREATEST(teoricos, practicos)
+FROM asignaturas;
