@@ -1,12 +1,28 @@
 -- Relación DML 3 - SELECT correlacionados y agrupaciones
 
 -- 1. Calcular el número de profesores de cada departamento.
+SELECT d.nombre, COUNT(p.nrp) "NUMERO PROFESORES"
+FROM departamentos d, profesores p
+WHERE p.departamento=d.codigo
+GROUP BY d.nombre;
 
 -- 2. Calcular el número de créditos asignados a cada departamento. Se consideran los créditos establecidos para cada asignatura del departamento, no si la imparten o no profesores del mismo.
+SELECT d.nombre, SUM(a.creditos) "SUMA DE CREDITOS"
+FROM departamentos d, asignaturas a
+WHERE a.departamento=d.codigo
+GROUP BY d.nombre;
 
 -- 3. Calcular el número de alumnos matriculados por curso (cada alumno debe contar una sola vez por curso aunque esté matriculado de varias asignaturas).
+SELECT asi.curso, COUNT(DISTINCT alu.dni) "NUMERO DE ALUMNOS"
+FROM (asignaturas asi join matricular m on asi.codigo=m.asignatura) join alumnos alu on m.alumno=alu.dni
+GROUP BY asi.curso;
 
 -- 4. Calcular, por cada asignatura, qué porcentaje de sus alumnos son mujeres. Mostrar el código de la asignatura y el porcentaje.
+SELECT m.asignatura, ROUND((COUNT(alu.dni)/(SELECT COUNT(*) FROM matricular maux WHERE maux.asignatura=m.asignatura)*100),1) "PORCENTAJE MUJERES"
+FROM matricular m, alumnos alu
+WHERE alu.sexo like 'FEM'
+AND m.alumno=alu.dni
+GROUP BY m.asignatura;
 
 -- 5. De los alumnos varones matriculados en al menos 3 asignaturas , visualizar aquéllos que tengan al mismo profesor en, al menos dos asignaturas.
 
